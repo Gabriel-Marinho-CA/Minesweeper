@@ -1,9 +1,18 @@
 package br.com.gabr.cm.model;
 
+import br.com.gabr.cm.exception.ExplosionException;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class Field {
+
+
+    // COLORS
+    public static final String ANSI_RED = "\u001B[31m";
+    public static final String ANSI_GREEN = "\u001B[32m";
+    public static final String ANSI_BLACK = "\u001B[30m";
+    // COLORS
     private final int line;
     private final int column;
     private boolean open = false;
@@ -37,5 +46,100 @@ public class Field {
         }
     }
 
+    public boolean handleMarked() {
+        if (!open) {
+            return marked = !marked;
+        } else {
+            return marked;
+        }
+    }
 
+    public boolean handleOpen() {
+        if (!open && !marked) {
+            open = true;
+
+            if (mined) {
+                throw new ExplosionException();
+            }
+
+            if (safeNeighboorhood()) {
+                // Reference method same as lambda expression ex: (n -> n.handleOpen());
+                neighbors.forEach(Field::handleOpen);
+            }
+        }
+
+        return false;
+    }
+
+    boolean safeNeighboorhood() {
+        return neighbors
+                .stream()
+                .noneMatch(n -> n.mined);
+    }
+
+    public boolean checkMarked() {
+        return marked;
+    }
+
+    public boolean handleMineField() {
+        if (!mined) {
+            return mined = true;
+        } else {
+            return mined;
+        }
+    }
+
+    boolean safeField() {
+        boolean discoverFields = !mined && open;
+        boolean protectedFields = mined && marked;
+
+        return discoverFields || protectedFields;
+    }
+
+    long minesInNeighborhood() {
+        return neighbors
+                .stream()
+                .filter(n -> n.mined)
+                .count();
+    }
+
+    void restar() {
+        open = false;
+        mined = false;
+        marked = false;
+    }
+
+    public String toString() {
+
+        if (marked) {
+            return ANSI_GREEN+"X";
+
+        } else if (open && mined) {
+            return ANSI_RED+"*";
+
+        } else if (open && minesInNeighborhood() > 0) {
+            return Long.toString(minesInNeighborhood());
+
+        } else if (open) {
+            return " ";
+        } else {
+            return ANSI_BLACK+"?";
+        }
+    }
+
+    public boolean isOpen() {
+        return open;
+    }
+
+    public boolean isClose() {
+        return !isOpen();
+    }
+
+    public int getLine() {
+        return line;
+    }
+
+    public int getColumn() {
+        return column;
+    }
 }
