@@ -11,7 +11,7 @@ public class Field {
     // COLORS
     public static final String ANSI_RED = "\u001B[31m";
     public static final String ANSI_GREEN = "\u001B[32m";
-    public static final String ANSI_BLACK = "\u001B[30m";
+    public static final String ANSI_Yellow = "\033[0;33m";
     // COLORS
     private final int line;
     private final int column;
@@ -66,9 +66,10 @@ public class Field {
                 // Reference method same as lambda expression ex: (n -> n.handleOpen());
                 neighbors.forEach(Field::handleOpen);
             }
+            return true;
+        } else {
+            return false;
         }
-
-        return false;
     }
 
     boolean safeNeighboorhood() {
@@ -87,6 +88,9 @@ public class Field {
         } else {
             return mined;
         }
+    }
+    public boolean isMined() {
+        return mined;
     }
 
     boolean safeField() {
@@ -123,7 +127,7 @@ public class Field {
         } else if (open) {
             return " ";
         } else {
-            return ANSI_BLACK+"?";
+            return ANSI_Yellow+"?";
         }
     }
 
