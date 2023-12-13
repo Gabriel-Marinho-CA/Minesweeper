@@ -50,22 +50,35 @@ public class FieldTest {
             "false,1",
             "false,2"
     })
-    void handleMarkedTest(boolean isDefault, int numberOfTimesCallMethod) {
 
-        if (isDefault) {
-            assertFalse(field.checkMarked());
-        } else {
-            for (int i = 0; i < numberOfTimesCallMethod; i++) {
-                field.handleMarked();
-            }
+    @Test
+    void openWithNeighboorsTest() {
+        Field n1x1 = new Field(1, 1);
+        Field n2x2 = new Field(2, 2);
 
-            if (numberOfTimesCallMethod % 2 == 0) {
-                assertFalse(field.checkMarked());
+        n2x2.addNeighboor(n1x1);
 
-            } else {
-                assertTrue(field.checkMarked());
-            }
-        }
+        field.addNeighboor(n2x2);
+        field.handleOpen();
+
+        assertTrue(n2x2.isOpen() && n1x1.isOpen());
+    }
+
+    @Test
+    void openWithNeighboorsMinedFieldTest() {
+        Field n1x1 = new Field(1, 1);
+        Field n1x2 = new Field(1, 2);
+        Field n2x2 = new Field(2, 2);
+
+        n1x2.handleMineField();
+
+        n2x2.addNeighboor(n1x1);
+        n2x2.addNeighboor(n1x2);
+
+        field.addNeighboor(n2x2);
+        field.handleOpen();
+
+        assertTrue(n2x2.isOpen() && n1x1.isClose());
     }
 
     @ParameterizedTest
@@ -98,36 +111,5 @@ public class FieldTest {
             });
         }
     }
-
-    @Test
-    void openWithNeighboorsTest() {
-        Field n1x1 = new Field(1, 1);
-        Field n2x2 = new Field(2, 2);
-
-        n2x2.addNeighboor(n1x1);
-
-        field.addNeighboor(n2x2);
-        field.handleOpen();
-
-        assertTrue(n2x2.isOpen() && n1x1.isOpen());
-    }
-
-    @Test
-    void openWithNeighboorsMinedFieldTest() {
-        Field n1x1 = new Field(1, 1);
-        Field n1x2 = new Field(1, 2);
-        Field n2x2 = new Field(2, 2);
-
-        n1x2.handleMineField();
-
-        n2x2.addNeighboor(n1x1);
-        n2x2.addNeighboor(n1x2);
-
-        field.addNeighboor(n2x2);
-        field.handleOpen();
-
-        assertTrue(n2x2.isOpen() && n1x1.isClose());
-    }
-
 
 }

@@ -13,6 +13,12 @@ public class BoardConsole {
     private Board board;
     private Scanner sc = new Scanner(System.in);
 
+    // COLORS
+    public static final String ANSI_RED = "\u001B[31m";
+    public static final String ANSI_GREEN = "\u001B[32m";
+    public static final String ANSI_Yellow = "\033[0;33m";
+    // COLORS
+
     public BoardConsole(Board board) {
         this.board = board;
 
@@ -28,7 +34,7 @@ public class BoardConsole {
 
                 lifeCycleGame();
 
-                System.out.println("Another game? (S/n)");
+                System.out.println("Another game? (Y/n)");
                 String resp = sc.nextLine();
 
                 if ("n".equalsIgnoreCase(resp)) {
@@ -54,18 +60,38 @@ public class BoardConsole {
 
                 String typed = getUserInput("Type coords (x,y): ");
 
-                boolean checkValuesTyped = CheckUserInput(typed);
+                boolean checkValuesTyped = CheckCoords(typed);
+
+                if (checkValuesTyped) {
+
+                    Iterator<Integer> xy = Arrays.stream(typed.split(",")).map(c -> Integer.parseInt(c.trim())).iterator();
+
+                    typed = getUserInput("1 - to Open or 2 - to mark on/off");
+
+//                     if(checkValuesTyped) {
+                    if ("1".equalsIgnoreCase(typed)) {
+                        board.handleMarkAndOpenField(xy.next(), xy.next(), "field");
+                    } else if ("2".equals(typed)) {
+                        board.handleMarkAndOpenField(xy.next(), xy.next(), "mark");
+                    }
+//                     }
+                } else {
+                    System.out.println("Type a valid input");
+                }
 
             }
-            System.out.println("You Won !");
+            System.out.println(board);
+            System.out.println(ANSI_GREEN + "You Won !" + ANSI_Yellow);
 
 
         } catch (ExplosionException e) {
-            System.out.println("You loose !");
+            System.out.println(board);
+            System.out.println(ANSI_RED + "You loose !" + ANSI_Yellow);
         }
     }
 
     private String getUserInput(String text) {
+        System.out.println(text);
         String typed = sc.nextLine();
 
         if ("exit".equalsIgnoreCase(typed)) {
@@ -75,28 +101,28 @@ public class BoardConsole {
         return typed;
     }
 
-    private boolean CheckUserInput(String input) {
+    private boolean CheckCoords(String input) {
 
         String regex = "\\d+,\\d+";
         boolean inputCheckValues;
 
-        if(input.isEmpty()) {
+        if (input.isEmpty()) {
             return false;
 
-        } else if(!input.matches(regex)) {
+        } else if (!input.matches(regex)) {
             return false;
 
         } else {
-             inputCheckValues =
+            inputCheckValues =
                     Arrays.stream(input.split(","))
                             .map(n -> Integer.parseInt(n))
                             .anyMatch(n -> n < 0);
 
-             if(inputCheckValues = false) {
-                 return false;
-             } else {
-                 return true;
-             }
+            if (inputCheckValues = false) {
+                return false;
+            } else {
+                return true;
+            }
         }
 
     }

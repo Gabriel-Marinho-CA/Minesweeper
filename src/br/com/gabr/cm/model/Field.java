@@ -6,19 +6,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Field {
-
-
-    // COLORS
-    public static final String ANSI_RED = "\u001B[31m";
-    public static final String ANSI_GREEN = "\u001B[32m";
-    public static final String ANSI_Yellow = "\033[0;33m";
-    // COLORS
     private final int line;
     private final int column;
     private boolean open = false;
     private boolean mined = false;
     private boolean marked = false;
     private List<Field> neighbors = new ArrayList<>();
+
+    // COLORS
+    public static final String ANSI_RED = "\u001B[31m";
+    public static final String ANSI_GREEN = "\u001B[32m";
+    public static final String ANSI_Yellow = "\033[0;33m";
+
+    // COLORS
+
 
     public Field(int line, int column) {
         this.line = line;
@@ -114,12 +115,13 @@ public class Field {
     }
 
     public String toString() {
+        String redAsterisk = ANSI_RED + "*" + ANSI_Yellow;
+        String greenMark = ANSI_GREEN + "X" + ANSI_Yellow;
 
         if (marked) {
-            return ANSI_GREEN+"X";
-
+            return greenMark;
         } else if (open && mined) {
-            return ANSI_RED+"*";
+            return redAsterisk;
 
         } else if (open && minesInNeighborhood() > 0) {
             return Long.toString(minesInNeighborhood());
@@ -145,5 +147,9 @@ public class Field {
 
     public int getColumn() {
         return column;
+    }
+
+    void setOpen(boolean open) {
+        this.open = open;
     }
 }
